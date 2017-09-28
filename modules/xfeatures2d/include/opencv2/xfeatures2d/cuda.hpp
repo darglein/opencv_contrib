@@ -1,4 +1,4 @@
-/*M///////////////////////////////////////////////////////////////////////////////////////
+﻿/*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
 //
@@ -160,6 +160,44 @@ public:
 };
 
 //! @}
+
+typedef cv::cuda::PtrStepSz<float> SiftImageType;
+
+class CV_EXPORTS SIFT_CUDA
+{
+public:
+
+    SIFT_CUDA(
+            int imageWidth, int imageHeight, bool doubleScale, int maxOctaves,
+            int nfeatures = 0, int nOctaveLayers = 3,
+            double contrastThreshold = 0.04, double edgeThreshold = 10,
+            double sigma = 1.6);
+
+    void initMemory();
+    int compute(const GpuMat& img, GpuMat& keypoints, GpuMat& descriptors);
+
+private:
+    //sift parameters
+    int numOctaves;
+    int imageWidth;
+    int imageHeight;
+    bool doubleScale;
+    int nfeatures;
+    int nOctaveLayers;
+    double contrastThreshold;
+    double edgeThreshold;
+    double sigma;
+
+    //temporary memory
+    std::vector<SiftImageType> gaussianPyramid2;
+    std::vector<SiftImageType> dogPyramid2;
+    GpuMat pointCounter;
+    GpuMat initialBlurKernel;
+    std::vector<GpuMat> octaveBlurKernels;
+    GpuMat memorygpyramid;
+    GpuMat memorydogpyramid;
+    bool initialized;
+};
 
 }} // namespace cv { namespace cuda {
 
